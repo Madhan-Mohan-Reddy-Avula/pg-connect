@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
 import PGSetup from "./pages/owner/PGSetup";
 import RoomsManagement from "./pages/owner/RoomsManagement";
 import GuestsManagement from "./pages/owner/GuestsManagement";
@@ -67,6 +68,7 @@ function AppRoutes() {
       
       {/* Owner Routes */}
       <Route path="/owner" element={<ProtectedRoute allowedRole="owner"><OwnerDashboard /></ProtectedRoute>} />
+      <Route path="/owner/analytics" element={<ProtectedRoute allowedRole="owner"><OwnerAnalytics /></ProtectedRoute>} />
       <Route path="/owner/pg" element={<ProtectedRoute allowedRole="owner"><PGSetup /></ProtectedRoute>} />
       <Route path="/owner/rooms" element={<ProtectedRoute allowedRole="owner"><RoomsManagement /></ProtectedRoute>} />
       <Route path="/owner/guests" element={<ProtectedRoute allowedRole="owner"><GuestsManagement /></ProtectedRoute>} />
