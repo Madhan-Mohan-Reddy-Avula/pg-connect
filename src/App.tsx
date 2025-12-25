@@ -13,9 +13,12 @@ import PGSetup from "./pages/owner/PGSetup";
 import RoomsManagement from "./pages/owner/RoomsManagement";
 import GuestsManagement from "./pages/owner/GuestsManagement";
 import RentTracking from "./pages/owner/RentTracking";
+import UPISettings from "./pages/owner/UPISettings";
+import PaymentVerification from "./pages/owner/PaymentVerification";
 import OwnerComplaints from "./pages/owner/OwnerComplaints";
 import GuestDashboard from "./pages/guest/GuestDashboard";
 import GuestProfile from "./pages/guest/GuestProfile";
+import PayRent from "./pages/guest/PayRent";
 import GuestComplaints from "./pages/guest/GuestComplaints";
 
 const queryClient = new QueryClient();
@@ -73,11 +76,14 @@ function AppRoutes() {
       <Route path="/owner/rooms" element={<ProtectedRoute allowedRole="owner"><RoomsManagement /></ProtectedRoute>} />
       <Route path="/owner/guests" element={<ProtectedRoute allowedRole="owner"><GuestsManagement /></ProtectedRoute>} />
       <Route path="/owner/rents" element={<ProtectedRoute allowedRole="owner"><RentTracking /></ProtectedRoute>} />
+      <Route path="/owner/upi" element={<ProtectedRoute allowedRole="owner"><UPISettings /></ProtectedRoute>} />
+      <Route path="/owner/payments" element={<ProtectedRoute allowedRole="owner"><PaymentVerification /></ProtectedRoute>} />
       <Route path="/owner/complaints" element={<ProtectedRoute allowedRole="owner"><OwnerComplaints /></ProtectedRoute>} />
       
       {/* Guest Routes */}
       <Route path="/guest" element={<ProtectedRoute allowedRole="guest"><GuestDashboard /></ProtectedRoute>} />
       <Route path="/guest/profile" element={<ProtectedRoute allowedRole="guest"><GuestProfile /></ProtectedRoute>} />
+      <Route path="/guest/pay" element={<ProtectedRoute allowedRole="guest"><PayRent /></ProtectedRoute>} />
       <Route path="/guest/complaints" element={<ProtectedRoute allowedRole="guest"><GuestComplaints /></ProtectedRoute>} />
       
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

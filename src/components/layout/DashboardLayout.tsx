@@ -14,7 +14,10 @@ import {
   LogOut,
   Menu,
   X,
-  BarChart3
+  BarChart3,
+  QrCode,
+  CheckSquare,
+  Wallet
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -30,12 +33,15 @@ const ownerNavItems = [
   { href: '/owner/rooms', label: 'Rooms', icon: BedDouble },
   { href: '/owner/guests', label: 'Guests', icon: Users },
   { href: '/owner/rents', label: 'Rent Tracking', icon: Receipt },
+  { href: '/owner/upi', label: 'UPI Settings', icon: QrCode },
+  { href: '/owner/payments', label: 'Verify Payments', icon: CheckSquare },
   { href: '/owner/complaints', label: 'Complaints', icon: MessageSquare },
 ];
 
 const guestNavItems = [
   { href: '/guest', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/guest/profile', label: 'My Profile', icon: User },
+  { href: '/guest/pay', label: 'Pay Rent', icon: Wallet },
   { href: '/guest/complaints', label: 'Complaints', icon: MessageSquare },
 ];
 

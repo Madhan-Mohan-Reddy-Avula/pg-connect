@@ -192,6 +192,69 @@ export type Database = {
           },
         ]
       }
+      manual_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          guest_id: string
+          id: string
+          payment_purpose: string
+          pg_id: string
+          rejection_reason: string | null
+          screenshot_url: string | null
+          status: string
+          updated_at: string
+          upi_transaction_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          guest_id: string
+          id?: string
+          payment_purpose?: string
+          pg_id: string
+          rejection_reason?: string | null
+          screenshot_url?: string | null
+          status?: string
+          updated_at?: string
+          upi_transaction_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          guest_id?: string
+          id?: string
+          payment_purpose?: string
+          pg_id?: string
+          rejection_reason?: string | null
+          screenshot_url?: string | null
+          status?: string
+          updated_at?: string
+          upi_transaction_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_payments_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_payments_pg_id_fkey"
+            columns: ["pg_id"]
+            isOneToOne: false
+            referencedRelation: "pgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pgs: {
         Row: {
           address: string
@@ -204,6 +267,8 @@ export type Database = {
           owner_id: string
           owner_name: string
           updated_at: string
+          upi_id: string | null
+          upi_qr_url: string | null
         }
         Insert: {
           address: string
@@ -216,6 +281,8 @@ export type Database = {
           owner_id: string
           owner_name: string
           updated_at?: string
+          upi_id?: string | null
+          upi_qr_url?: string | null
         }
         Update: {
           address?: string
@@ -228,6 +295,8 @@ export type Database = {
           owner_id?: string
           owner_name?: string
           updated_at?: string
+          upi_id?: string | null
+          upi_qr_url?: string | null
         }
         Relationships: []
       }
