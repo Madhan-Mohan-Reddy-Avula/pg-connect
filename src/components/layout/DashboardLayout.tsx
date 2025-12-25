@@ -13,7 +13,8 @@ import {
   User,
   LogOut,
   Menu,
-  X
+  X,
+  BarChart3
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,7 @@ interface DashboardLayoutProps {
 
 const ownerNavItems = [
   { href: '/owner', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/owner/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/owner/pg', label: 'My PG', icon: Home },
   { href: '/owner/rooms', label: 'Rooms', icon: BedDouble },
   { href: '/owner/guests', label: 'Guests', icon: Users },
