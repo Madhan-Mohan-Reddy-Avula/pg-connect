@@ -141,7 +141,7 @@ const UPISettings = () => {
 
   if (loading) {
     return (
-      <DashboardLayout role="owner">
+      <DashboardLayout>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
@@ -151,7 +151,7 @@ const UPISettings = () => {
 
   if (!pgId) {
     return (
-      <DashboardLayout role="owner">
+      <DashboardLayout>
         <div className="min-h-[60vh] flex items-center justify-center p-6">
           <Card className="premium-card max-w-md">
             <CardContent className="pt-8 pb-8 text-center">
@@ -170,7 +170,7 @@ const UPISettings = () => {
   }
 
   return (
-    <DashboardLayout role="owner">
+    <DashboardLayout>
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Header */}
         <Card className="premium-card overflow-hidden">

@@ -212,7 +212,7 @@ const PayRent = () => {
 
   if (loadingGuest) {
     return (
-      <DashboardLayout role="guest">
+      <DashboardLayout>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
@@ -222,7 +222,7 @@ const PayRent = () => {
 
   if (!guestData?.pg?.upi_id) {
     return (
-      <DashboardLayout role="guest">
+      <DashboardLayout>
         <div className="min-h-[60vh] flex items-center justify-center p-6">
           <Card className="premium-card max-w-md">
             <CardContent className="pt-8 pb-8 text-center">
@@ -241,7 +241,7 @@ const PayRent = () => {
   }
 
   return (
-    <DashboardLayout role="guest">
+    <DashboardLayout>
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Hero Payment Card */}
         <Card className="premium-card overflow-hidden">

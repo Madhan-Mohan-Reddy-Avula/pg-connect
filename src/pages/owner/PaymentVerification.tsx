@@ -122,7 +122,7 @@ const PaymentVerification = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout role="owner">
+      <DashboardLayout>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
@@ -131,7 +131,7 @@ const PaymentVerification = () => {
   }
 
   return (
-    <DashboardLayout role="owner">
+    <DashboardLayout>
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-3">
