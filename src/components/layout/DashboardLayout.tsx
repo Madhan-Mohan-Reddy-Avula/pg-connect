@@ -12,14 +12,13 @@ import {
   MessageSquare,
   User,
   LogOut,
-  Menu,
-  X,
   BarChart3,
   QrCode,
   CheckSquare,
-  Wallet
+  Wallet,
+  Settings,
+  ChevronLeft
 } from 'lucide-react';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface DashboardLayoutProps {
@@ -27,31 +26,47 @@ interface DashboardLayoutProps {
 }
 
 const ownerNavItems = [
-  { href: '/owner', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/owner', label: 'Home', icon: LayoutDashboard },
   { href: '/owner/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/owner/pg', label: 'My PG', icon: Home },
   { href: '/owner/rooms', label: 'Rooms', icon: BedDouble },
   { href: '/owner/guests', label: 'Guests', icon: Users },
-  { href: '/owner/rents', label: 'Rent Tracking', icon: Receipt },
-  { href: '/owner/upi', label: 'UPI Settings', icon: QrCode },
-  { href: '/owner/payments', label: 'Verify Payments', icon: CheckSquare },
-  { href: '/owner/complaints', label: 'Complaints', icon: MessageSquare },
+  { href: '/owner/rents', label: 'Rent', icon: Receipt },
+  { href: '/owner/upi', label: 'UPI', icon: QrCode },
+  { href: '/owner/payments', label: 'Verify', icon: CheckSquare },
+  { href: '/owner/complaints', label: 'Issues', icon: MessageSquare },
 ];
 
 const guestNavItems = [
-  { href: '/guest', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/guest/profile', label: 'My Profile', icon: User },
-  { href: '/guest/pay', label: 'Pay Rent', icon: Wallet },
-  { href: '/guest/complaints', label: 'Complaints', icon: MessageSquare },
+  { href: '/guest', label: 'Home', icon: LayoutDashboard },
+  { href: '/guest/profile', label: 'Profile', icon: User },
+  { href: '/guest/pay', label: 'Pay', icon: Wallet },
+  { href: '/guest/complaints', label: 'Issues', icon: MessageSquare },
+];
+
+// Bottom nav items (max 5 for mobile)
+const ownerBottomNav = [
+  { href: '/owner', label: 'Home', icon: LayoutDashboard },
+  { href: '/owner/guests', label: 'Guests', icon: Users },
+  { href: '/owner/payments', label: 'Verify', icon: CheckSquare },
+  { href: '/owner/rents', label: 'Rent', icon: Receipt },
+  { href: '/owner/analytics', label: 'Stats', icon: BarChart3 },
+];
+
+const guestBottomNav = [
+  { href: '/guest', label: 'Home', icon: LayoutDashboard },
+  { href: '/guest/pay', label: 'Pay', icon: Wallet },
+  { href: '/guest/complaints', label: 'Issues', icon: MessageSquare },
+  { href: '/guest/profile', label: 'Profile', icon: User },
 ];
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { role, signOut, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = role === 'owner' ? ownerNavItems : guestNavItems;
+  const bottomNavItems = role === 'owner' ? ownerBottomNav : guestBottomNav;
 
   const handleSignOut = async () => {
     await signOut();
@@ -60,83 +75,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b z-50 px-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Building2 className="w-7 h-7 text-primary" />
-          <span className="font-bold text-lg">PG Manager</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </Button>
-      </header>
-
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-foreground/20 z-40"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Mobile Sidebar */}
-      <aside className={cn(
-        "lg:hidden fixed top-16 left-0 bottom-0 w-72 bg-card border-r z-40 transform transition-transform duration-200",
-        mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <nav className="p-4 space-y-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
-                  isActive 
-                    ? "bg-primary text-primary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-muted-foreground"
-            onClick={handleSignOut}
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Sign Out
-          </Button>
-        </div>
-      </aside>
-
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed top-0 left-0 bottom-0 w-64 bg-card border-r flex-col">
-        <div className="p-6 border-b">
+      <aside className="hidden lg:flex fixed top-0 left-0 bottom-0 w-72 bg-card/50 backdrop-blur-xl border-r border-border/30 flex-col z-50">
+        {/* Logo */}
+        <div className="p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-primary" />
+            <div className="w-11 h-11 rounded-xl btn-gradient flex items-center justify-center shadow-glow-sm">
+              <Building2 className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-lg">PG Manager</h1>
+              <h1 className="font-bold text-lg text-foreground">PG Manager</h1>
               <p className="text-xs text-muted-foreground capitalize">{role} Panel</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
@@ -145,31 +100,36 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
+                  "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group",
                   isActive 
-                    ? "bg-primary text-primary-foreground shadow-md" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-glow-sm" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className={cn("w-5 h-5 transition-transform duration-300", isActive ? "" : "group-hover:scale-110")} />
                 <span className="font-medium">{item.label}</span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t">
-          <div className="flex items-center gap-3 px-4 py-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="w-4 h-4 text-primary" />
+        {/* User Section */}
+        <div className="p-4 border-t border-border/30">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/30 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center">
+              <User className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.email}</p>
+              <p className="text-sm font-medium text-foreground truncate">{user?.email}</p>
+              <p className="text-xs text-muted-foreground capitalize">{role}</p>
             </div>
           </div>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-xl"
             onClick={handleSignOut}
           >
             <LogOut className="w-5 h-5 mr-3" />
@@ -178,9 +138,59 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </aside>
 
+      {/* Mobile Header */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card/80 backdrop-blur-xl border-b border-border/30 z-50 px-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl btn-gradient flex items-center justify-center shadow-glow-sm">
+            <Building2 className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <span className="font-bold text-lg text-foreground">PG Manager</span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleSignOut}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <LogOut className="w-5 h-5" />
+        </Button>
+      </header>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-card/95 backdrop-blur-xl border-t border-border/30 z-50 px-2 safe-area-pb">
+        <div className="flex items-center justify-around h-full">
+          {bottomNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 min-w-[60px]",
+                  isActive 
+                    ? "text-primary" 
+                    : "text-muted-foreground"
+                )}
+              >
+                <div className={cn(
+                  "p-2 rounded-xl transition-all duration-300",
+                  isActive ? "bg-primary/10 shadow-glow-sm" : ""
+                )}>
+                  <Icon className={cn("w-5 h-5", isActive ? "text-primary" : "")} />
+                </div>
+                <span className={cn("text-[10px] font-medium", isActive ? "text-primary" : "")}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0 min-h-screen">
-        <div className="p-4 lg:p-8">
+      <main className="lg:ml-72 pt-16 lg:pt-0 pb-24 lg:pb-0 min-h-screen">
+        <div className="p-4 lg:p-8 max-w-7xl">
           {children}
         </div>
       </main>
