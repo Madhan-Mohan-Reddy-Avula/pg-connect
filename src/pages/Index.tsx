@@ -1,66 +1,35 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Building2, 
-  Users, 
-  BedDouble, 
-  IndianRupee, 
-  FileText, 
-  MessageSquare,
-  Shield,
-  Clock,
-  BarChart3,
-  ArrowRight,
-  CheckCircle2,
-  Sparkles
-} from 'lucide-react';
-
-const features = [
-  {
-    icon: Building2,
-    title: 'PG Setup',
-    description: 'Easily configure your paying guest property with rooms, beds, and house rules.',
-  },
-  {
-    icon: BedDouble,
-    title: 'Room & Bed Management',
-    description: 'Organize rooms with automatic bed generation and real-time occupancy tracking.',
-  },
-  {
-    icon: Users,
-    title: 'Guest Management',
-    description: 'Add guests, assign beds, track check-ins, and manage vacate requests seamlessly.',
-  },
-  {
-    icon: IndianRupee,
-    title: 'Rent Tracking',
-    description: 'Track monthly rent payments, generate reports, and send payment reminders.',
-  },
-  {
-    icon: FileText,
-    title: 'Document Storage',
-    description: 'Securely store guest ID proofs and important documents in one place.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Complaint System',
-    description: 'Handle guest complaints efficiently with status tracking and resolution workflow.',
-  },
-];
-
-const benefits = [
-  'Real-time occupancy dashboard',
-  'Automated rent tracking',
-  'Secure document storage',
-  'Mobile-friendly interface',
-  'Multi-room management',
-  'Guest self-service portal',
-];
-
+import { Building2, Users, BedDouble, IndianRupee, FileText, MessageSquare, Shield, Clock, BarChart3, ArrowRight, CheckCircle2 } from 'lucide-react';
+const features = [{
+  icon: Building2,
+  title: 'PG Setup',
+  description: 'Easily configure your paying guest property with rooms, beds, and house rules.'
+}, {
+  icon: BedDouble,
+  title: 'Room & Bed Management',
+  description: 'Organize rooms with automatic bed generation and real-time occupancy tracking.'
+}, {
+  icon: Users,
+  title: 'Guest Management',
+  description: 'Add guests, assign beds, track check-ins, and manage vacate requests seamlessly.'
+}, {
+  icon: IndianRupee,
+  title: 'Rent Tracking',
+  description: 'Track monthly rent payments, generate reports, and send payment reminders.'
+}, {
+  icon: FileText,
+  title: 'Document Storage',
+  description: 'Securely store guest ID proofs and important documents in one place.'
+}, {
+  icon: MessageSquare,
+  title: 'Complaint System',
+  description: 'Handle guest complaints efficiently with status tracking and resolution workflow.'
+}];
+const benefits = ['Real-time occupancy dashboard', 'Automated rent tracking', 'Secure document storage', 'Mobile-friendly interface', 'Multi-room management', 'Guest self-service portal'];
 export default function Index() {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,7 +65,7 @@ export default function Index() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto animate-fade-in">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
+              
               Simplify Your PG Management
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
@@ -126,18 +95,25 @@ export default function Index() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            {[
-              { value: '100%', label: 'Free to Start' },
-              { value: '24/7', label: 'Access Anywhere' },
-              { value: '5min', label: 'Quick Setup' },
-              { value: 'Secure', label: 'Data Protected' },
-            ].map((stat, i) => (
-              <div key={i} className="text-center p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 animate-slide-up" style={{
+          animationDelay: '0.2s'
+        }}>
+            {[{
+            value: '100%',
+            label: 'Free to Start'
+          }, {
+            value: '24/7',
+            label: 'Access Anywhere'
+          }, {
+            value: '5min',
+            label: 'Quick Setup'
+          }, {
+            value: 'Secure',
+            label: 'Data Protected'
+          }].map((stat, i) => <div key={i} className="text-center p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border">
                 <p className="text-3xl sm:text-4xl font-bold text-primary mb-1">{stat.value}</p>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -155,11 +131,7 @@ export default function Index() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <Card 
-                key={i} 
-                className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/80 backdrop-blur-sm"
-              >
+            {features.map((feature, i) => <Card key={i} className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="w-6 h-6 text-primary" />
@@ -167,8 +139,7 @@ export default function Index() {
                   <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm">{feature.description}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -186,12 +157,10 @@ export default function Index() {
                 your unique needs and simplifies day-to-day operations.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {benefits.map((benefit, i) => (
-                  <div key={i} className="flex items-center gap-3">
+                {benefits.map((benefit, i) => <div key={i} className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0" />
                     <span className="text-foreground">{benefit}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -246,11 +215,7 @@ export default function Index() {
                     </Button>
                   </Link>
                   <Link to="/auth">
-                    <Button 
-                      size="lg" 
-                      variant="outline" 
-                      className="w-full sm:w-auto text-lg px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-                    >
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
                       Sign In as Guest
                     </Button>
                   </Link>
@@ -275,6 +240,5 @@ export default function Index() {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
