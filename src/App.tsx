@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
+
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
@@ -66,7 +66,7 @@ function AuthRedirect() {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<AuthRedirect />} />
       <Route path="/auth" element={<AuthRedirect />} />
       
       {/* Owner Routes */}
