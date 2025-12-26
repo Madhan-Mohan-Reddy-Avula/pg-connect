@@ -13,7 +13,8 @@ import {
   Home,
   Plus,
   AlertCircle,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -36,91 +37,34 @@ interface RecentGuest {
 export default function OwnerDashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
-    totalRooms: 0,
-    totalBeds: 0,
-    occupiedBeds: 0,
-    activeGuests: 0,
-    pendingRents: 0,
-    openComplaints: 0,
+    totalRooms: 0, totalBeds: 0, occupiedBeds: 0, activeGuests: 0, pendingRents: 0, openComplaints: 0,
   });
   const [recentGuests, setRecentGuests] = useState<RecentGuest[]>([]);
   const [hasPG, setHasPG] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
+    if (user) fetchDashboardData();
   }, [user]);
 
   const fetchDashboardData = async () => {
     try {
-      // Check if owner has a PG
-      const { data: pgData } = await supabase
-        .from('pgs')
-        .select('id')
-        .eq('owner_id', user?.id)
-        .maybeSingle();
-
+      const { data: pgData } = await supabase.from('pgs').select('id').eq('owner_id', user?.id).maybeSingle();
       setHasPG(!!pgData);
+      if (!pgData) { setLoading(false); return; }
 
-      if (!pgData) {
-        setLoading(false);
-        return;
-      }
-
-      // Fetch rooms count
-      const { count: roomsCount } = await supabase
-        .from('rooms')
-        .select('*', { count: 'exact', head: true })
-        .eq('pg_id', pgData.id);
-
-      // Fetch beds
-      const { data: bedsData } = await supabase
-        .from('beds')
-        .select('id, is_occupied, room_id, rooms!inner(pg_id)')
-        .eq('rooms.pg_id', pgData.id);
-
+      const { count: roomsCount } = await supabase.from('rooms').select('*', { count: 'exact', head: true }).eq('pg_id', pgData.id);
+      const { data: bedsData } = await supabase.from('beds').select('id, is_occupied, room_id, rooms!inner(pg_id)').eq('rooms.pg_id', pgData.id);
       const totalBeds = bedsData?.length || 0;
       const occupiedBeds = bedsData?.filter(b => b.is_occupied).length || 0;
+      const { data: guestsData } = await supabase.from('guests').select('id, full_name, status, check_in_date').eq('pg_id', pgData.id).eq('status', 'active').order('created_at', { ascending: false }).limit(5);
+      const { count: pendingRents } = await supabase.from('rents').select('*, guests!inner(pg_id)', { count: 'exact', head: true }).eq('guests.pg_id', pgData.id).eq('status', 'pending');
+      const { count: openComplaints } = await supabase.from('complaints').select('*', { count: 'exact', head: true }).eq('pg_id', pgData.id).eq('status', 'open');
 
-      // Fetch active guests
-      const { data: guestsData } = await supabase
-        .from('guests')
-        .select('id, full_name, status, check_in_date')
-        .eq('pg_id', pgData.id)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      const activeGuests = guestsData?.length || 0;
-
-      // Fetch pending rents
-      const { count: pendingRents } = await supabase
-        .from('rents')
-        .select('*, guests!inner(pg_id)', { count: 'exact', head: true })
-        .eq('guests.pg_id', pgData.id)
-        .eq('status', 'pending');
-
-      // Fetch open complaints
-      const { count: openComplaints } = await supabase
-        .from('complaints')
-        .select('*', { count: 'exact', head: true })
-        .eq('pg_id', pgData.id)
-        .eq('status', 'open');
-
-      setStats({
-        totalRooms: roomsCount || 0,
-        totalBeds,
-        occupiedBeds,
-        activeGuests,
-        pendingRents: pendingRents || 0,
-        openComplaints: openComplaints || 0,
-      });
-
+      setStats({ totalRooms: roomsCount || 0, totalBeds, occupiedBeds, activeGuests: guestsData?.length || 0, pendingRents: pendingRents || 0, openComplaints: openComplaints || 0 });
       setRecentGuests(guestsData || []);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
@@ -130,7 +74,7 @@ export default function OwnerDashboard() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="w-12 h-12 rounded-full border-2 border-primary border-t-transparent animate-spin" />
         </div>
       </DashboardLayout>
     );
@@ -140,18 +84,13 @@ export default function OwnerDashboard() {
     return (
       <DashboardLayout>
         <div className="max-w-lg mx-auto mt-12 text-center animate-fade-in">
-          <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <Home className="w-10 h-10 text-primary" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center mx-auto mb-6 shadow-glow-sm">
+            <Sparkles className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold mb-3">Welcome to PG Manager!</h1>
-          <p className="text-muted-foreground mb-6">
-            Get started by setting up your PG details. You can add rooms, manage guests, and track rent payments.
-          </p>
-          <Button asChild size="lg">
-            <Link to="/owner/pg">
-              <Plus className="w-5 h-5 mr-2" />
-              Set Up Your PG
-            </Link>
+          <h1 className="text-2xl font-bold text-foreground mb-3">Welcome to PG Manager!</h1>
+          <p className="text-muted-foreground mb-8">Get started by setting up your PG details.</p>
+          <Button asChild size="lg" className="btn-gradient text-primary-foreground font-semibold shadow-glow hover:shadow-[0_0_40px_hsl(142_76%_52%/0.3)] transition-all">
+            <Link to="/owner/pg"><Plus className="w-5 h-5 mr-2" />Set Up Your PG</Link>
           </Button>
         </div>
       </DashboardLayout>
@@ -162,126 +101,80 @@ export default function OwnerDashboard() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your PG performance</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground">Your PG at a glance</p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Rooms"
-            value={stats.totalRooms}
-            icon={<Home className="w-6 h-6" />}
-            color="primary"
-          />
-          <StatCard
-            title="Total Beds"
-            value={stats.totalBeds}
-            icon={<BedDouble className="w-6 h-6" />}
-            color="info"
-          />
-          <StatCard
-            title="Occupied Beds"
-            value={`${stats.occupiedBeds}/${stats.totalBeds}`}
-            icon={<BedDouble className="w-6 h-6" />}
-            color="success"
-          />
-          <StatCard
-            title="Active Guests"
-            value={stats.activeGuests}
-            icon={<Users className="w-6 h-6" />}
-            color="primary"
-          />
+          <StatCard title="Total Rooms" value={stats.totalRooms} icon={<Home className="w-6 h-6" />} color="primary" />
+          <StatCard title="Total Beds" value={stats.totalBeds} icon={<BedDouble className="w-6 h-6" />} color="info" />
+          <StatCard title="Occupied" value={`${stats.occupiedBeds}/${stats.totalBeds}`} icon={<BedDouble className="w-6 h-6" />} color="success" />
+          <StatCard title="Active Guests" value={stats.activeGuests} icon={<Users className="w-6 h-6" />} color="accent" />
         </div>
 
-        {/* Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {stats.pendingRents > 0 && (
-            <Card className="border-warning/50 bg-warning/5">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center">
-                    <Receipt className="w-5 h-5 text-warning" />
+        {(stats.pendingRents > 0 || stats.openComplaints > 0) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {stats.pendingRents > 0 && (
+              <Card className="premium-card border-warning/30 bg-gradient-to-br from-warning/5 to-transparent">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center">
+                      <Receipt className="w-6 h-6 text-warning" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{stats.pendingRents} Pending Rent{stats.pendingRents > 1 ? 's' : ''}</p>
+                      <p className="text-sm text-muted-foreground">Requires attention</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold">{stats.pendingRents} Pending Rent{stats.pendingRents > 1 ? 's' : ''}</p>
-                    <p className="text-sm text-muted-foreground">Requires attention</p>
+                  <Button variant="outline" size="sm" asChild className="border-warning/30 hover:bg-warning/10"><Link to="/owner/rents">View</Link></Button>
+                </CardContent>
+              </Card>
+            )}
+            {stats.openComplaints > 0 && (
+              <Card className="premium-card border-destructive/30 bg-gradient-to-br from-destructive/5 to-transparent">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center">
+                      <AlertCircle className="w-6 h-6 text-destructive" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{stats.openComplaints} Open Complaint{stats.openComplaints > 1 ? 's' : ''}</p>
+                      <p className="text-sm text-muted-foreground">Needs resolution</p>
+                    </div>
                   </div>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/owner/rents">View</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                  <Button variant="outline" size="sm" asChild className="border-destructive/30 hover:bg-destructive/10"><Link to="/owner/complaints">View</Link></Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
 
-          {stats.openComplaints > 0 && (
-            <Card className="border-destructive/50 bg-destructive/5">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-destructive/20 flex items-center justify-center">
-                    <AlertCircle className="w-5 h-5 text-destructive" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{stats.openComplaints} Open Complaint{stats.openComplaints > 1 ? 's' : ''}</p>
-                    <p className="text-sm text-muted-foreground">Needs resolution</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/owner/complaints">View</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Recent Guests */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Guests</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/owner/guests" className="flex items-center gap-1">
-                View All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
+        <Card className="premium-card border-border/30">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-lg text-foreground">Recent Guests</CardTitle>
+            <Button variant="ghost" size="sm" asChild className="text-primary"><Link to="/owner/guests" className="flex items-center gap-1">View All <ArrowRight className="w-4 h-4" /></Link></Button>
           </CardHeader>
           <CardContent>
             {recentGuests.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-10 text-muted-foreground">
                 <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                <p>No guests yet. Add your first guest!</p>
-                <Button variant="outline" size="sm" className="mt-4" asChild>
-                  <Link to="/owner/guests">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Guest
-                  </Link>
-                </Button>
+                <p>No guests yet.</p>
+                <Button variant="outline" size="sm" className="mt-4" asChild><Link to="/owner/guests"><Plus className="w-4 h-4 mr-2" />Add Guest</Link></Button>
               </div>
             ) : (
               <div className="space-y-3">
                 {recentGuests.map((guest) => (
-                  <div
-                    key={guest.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-primary font-semibold">
-                          {guest.full_name.charAt(0).toUpperCase()}
-                        </span>
+                  <div key={guest.id} className="flex items-center justify-between p-4 rounded-xl bg-secondary/30 border border-border/30 hover:border-primary/20 transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center">
+                        <span className="text-primary font-semibold">{guest.full_name.charAt(0).toUpperCase()}</span>
                       </div>
                       <div>
-                        <p className="font-medium">{guest.full_name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {guest.check_in_date 
-                            ? `Checked in: ${new Date(guest.check_in_date).toLocaleDateString()}` 
-                            : 'No check-in date'}
-                        </p>
+                        <p className="font-medium text-foreground">{guest.full_name}</p>
+                        <p className="text-sm text-muted-foreground">{guest.check_in_date ? `Checked in: ${new Date(guest.check_in_date).toLocaleDateString()}` : 'No check-in date'}</p>
                       </div>
                     </div>
-                    <Badge variant={guest.status === 'active' ? 'default' : 'secondary'}>
-                      {guest.status}
-                    </Badge>
+                    <Badge variant={guest.status === 'active' ? 'default' : 'secondary'} className={guest.status === 'active' ? 'bg-primary/10 text-primary border-primary/20' : ''}>{guest.status}</Badge>
                   </div>
                 ))}
               </div>

@@ -4,12 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { Building2, User, Loader2, Home, Users } from 'lucide-react';
+import { Building2, Loader2, Home, Users, ArrowLeft, Sparkles } from 'lucide-react';
 import { z } from 'zod';
+import { Link } from 'react-router-dom';
 
 const authSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -64,7 +65,7 @@ export default function Auth() {
       toast({
         title: 'Sign up failed',
         description: error.message === 'User already registered' 
-          ? 'An account with this email already exists. Please sign in instead.'
+          ? 'An account with this email already exists.'
           : error.message,
         variant: 'destructive',
       });
@@ -73,7 +74,7 @@ export default function Auth() {
 
     toast({
       title: 'Account created!',
-      description: 'You have been signed in successfully.',
+      description: 'Welcome to PG Manager.',
     });
     
     navigate(role === 'owner' ? '/owner' : '/guest');
@@ -91,7 +92,7 @@ export default function Auth() {
       toast({
         title: 'Sign in failed',
         description: error.message === 'Invalid login credentials'
-          ? 'Incorrect email or password. Please try again.'
+          ? 'Incorrect email or password.'
           : error.message,
         variant: 'destructive',
       });
@@ -100,35 +101,50 @@ export default function Auth() {
 
     toast({
       title: 'Welcome back!',
-      description: 'You have been signed in successfully.',
+      description: 'Signed in successfully.',
     });
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px]" />
+      </div>
+
       <div className="w-full max-w-md animate-slide-up">
+        {/* Back Link */}
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm">Back to home</span>
+        </Link>
+
+        {/* Logo & Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-            <Building2 className="w-8 h-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl btn-gradient shadow-glow mb-6">
+            <Building2 className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold text-foreground">PG Manager</h1>
-          <p className="text-muted-foreground mt-2">Manage your paying guest accommodation</p>
+          <p className="text-muted-foreground mt-2">Premium PG Management Platform</p>
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="premium-card border-border/30 bg-card/80 backdrop-blur-xl">
           <Tabs defaultValue="signin" className="w-full">
-            <CardHeader className="pb-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <CardContent className="p-6">
+              <TabsList className="grid w-full grid-cols-2 bg-secondary/50 p-1 rounded-xl mb-6">
+                <TabsTrigger value="signin" className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-md transition-all">
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-md transition-all">
+                  Sign Up
+                </TabsTrigger>
               </TabsList>
-            </CardHeader>
-            
-            <CardContent>
-              <TabsContent value="signin" className="mt-0">
-                <form onSubmit={handleSignIn} className="space-y-4">
+              
+              <TabsContent value="signin" className="mt-0 space-y-0">
+                <form onSubmit={handleSignIn} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
+                    <Label htmlFor="signin-email" className="text-foreground">Email</Label>
                     <Input
                       id="signin-email"
                       type="email"
@@ -136,6 +152,7 @@ export default function Auth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={isLoading}
+                      className="h-12 bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl"
                     />
                     {errors.email && (
                       <p className="text-sm text-destructive">{errors.email}</p>
@@ -143,7 +160,7 @@ export default function Auth() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
+                    <Label htmlFor="signin-password" className="text-foreground">Password</Label>
                     <Input
                       id="signin-password"
                       type="password"
@@ -151,13 +168,18 @@ export default function Auth() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
+                      className="h-12 bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl"
                     />
                     {errors.password && (
                       <p className="text-sm text-destructive">{errors.password}</p>
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 btn-gradient text-primary-foreground font-semibold rounded-xl shadow-glow-sm hover:shadow-glow transition-all" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -170,10 +192,10 @@ export default function Auth() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="signup" className="mt-0">
-                <form onSubmit={handleSignUp} className="space-y-4">
+              <TabsContent value="signup" className="mt-0 space-y-0">
+                <form onSubmit={handleSignUp} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
+                    <Label htmlFor="signup-name" className="text-foreground">Full Name</Label>
                     <Input
                       id="signup-name"
                       type="text"
@@ -181,6 +203,7 @@ export default function Auth() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       disabled={isLoading}
+                      className="h-12 bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl"
                     />
                     {errors.fullName && (
                       <p className="text-sm text-destructive">{errors.fullName}</p>
@@ -188,7 +211,7 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email" className="text-foreground">Email</Label>
                     <Input
                       id="signup-email"
                       type="email"
@@ -196,6 +219,7 @@ export default function Auth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={isLoading}
+                      className="h-12 bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl"
                     />
                     {errors.email && (
                       <p className="text-sm text-destructive">{errors.email}</p>
@@ -203,7 +227,7 @@ export default function Auth() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password" className="text-foreground">Password</Label>
                     <Input
                       id="signup-password"
                       type="password"
@@ -211,6 +235,7 @@ export default function Auth() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
+                      className="h-12 bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl"
                     />
                     {errors.password && (
                       <p className="text-sm text-destructive">{errors.password}</p>
@@ -218,51 +243,50 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label>I am a...</Label>
+                    <Label className="text-foreground">I am a...</Label>
                     <RadioGroup 
                       value={role} 
                       onValueChange={(value) => setRole(value as 'owner' | 'guest')}
                       className="grid grid-cols-2 gap-4"
                     >
                       <div className="relative">
-                        <RadioGroupItem
-                          value="owner"
-                          id="owner"
-                          className="peer sr-only"
-                        />
+                        <RadioGroupItem value="owner" id="owner" className="peer sr-only" />
                         <Label
                           htmlFor="owner"
-                          className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
+                          className="flex flex-col items-center justify-center rounded-xl border-2 border-border/50 bg-secondary/30 p-4 hover:bg-secondary/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 cursor-pointer transition-all duration-300"
                         >
-                          <Home className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">PG Owner</span>
+                          <Home className="mb-2 h-6 w-6 text-primary" />
+                          <span className="text-sm font-medium text-foreground">PG Owner</span>
                         </Label>
                       </div>
                       <div className="relative">
-                        <RadioGroupItem
-                          value="guest"
-                          id="guest"
-                          className="peer sr-only"
-                        />
+                        <RadioGroupItem value="guest" id="guest" className="peer sr-only" />
                         <Label
                           htmlFor="guest"
-                          className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
+                          className="flex flex-col items-center justify-center rounded-xl border-2 border-border/50 bg-secondary/30 p-4 hover:bg-secondary/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 cursor-pointer transition-all duration-300"
                         >
-                          <Users className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">Guest</span>
+                          <Users className="mb-2 h-6 w-6 text-accent" />
+                          <span className="text-sm font-medium text-foreground">Guest</span>
                         </Label>
                       </div>
                     </RadioGroup>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 btn-gradient text-primary-foreground font-semibold rounded-xl shadow-glow-sm hover:shadow-glow transition-all" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Creating account...
                       </>
                     ) : (
-                      'Create Account'
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Create Account
+                      </>
                     )}
                   </Button>
                 </form>
