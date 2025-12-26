@@ -96,7 +96,7 @@ const PaymentVerification = () => {
     switch (status) {
       case "verified":
         return (
-          <Badge className="bg-accent/20 text-accent border-accent/30 border">
+          <Badge className="bg-foreground/20 text-foreground border-foreground/30 border">
             <CheckCircle className="h-3 w-3 mr-1" />Verified
           </Badge>
         );
@@ -108,7 +108,7 @@ const PaymentVerification = () => {
         );
       default:
         return (
-          <Badge className="bg-gold/20 text-gold border-gold/30 border">
+          <Badge className="bg-muted text-muted-foreground border-border border">
             <Clock className="h-3 w-3 mr-1" />Pending
           </Badge>
         );
@@ -122,35 +122,33 @@ const PaymentVerification = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <DashboardLayout role="owner">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout role="owner">
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-3">
-          <Card className="glass-card border-border/50 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent" />
-            <CardContent className="relative pt-4 pb-4 text-center">
-              <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-2">
-                <Clock className="h-5 w-5 text-gold" />
+          <Card className="premium-card overflow-hidden">
+            <CardContent className="pt-4 pb-4 text-center">
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-2">
+                <Clock className="h-5 w-5 text-muted-foreground" />
               </div>
               <p className="text-2xl font-bold text-foreground">{pendingPayments.length}</p>
               <p className="text-xs text-muted-foreground">Pending</p>
             </CardContent>
           </Card>
           
-          <Card className="glass-card border-border/50 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
-            <CardContent className="relative pt-4 pb-4 text-center">
-              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-2">
-                <CheckCircle className="h-5 w-5 text-accent" />
+          <Card className="premium-card overflow-hidden">
+            <CardContent className="pt-4 pb-4 text-center">
+              <div className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center mx-auto mb-2">
+                <CheckCircle className="h-5 w-5 text-foreground" />
               </div>
               <p className="text-2xl font-bold text-foreground">
                 {payments?.filter(p => p.status === "verified").length || 0}
@@ -159,10 +157,9 @@ const PaymentVerification = () => {
             </CardContent>
           </Card>
           
-          <Card className="glass-card border-border/50 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 to-transparent" />
-            <CardContent className="relative pt-4 pb-4 text-center">
-              <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center mx-auto mb-2">
+          <Card className="premium-card overflow-hidden">
+            <CardContent className="pt-4 pb-4 text-center">
+              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-2">
                 <XCircle className="h-5 w-5 text-destructive" />
               </div>
               <p className="text-2xl font-bold text-foreground">
@@ -175,8 +172,7 @@ const PaymentVerification = () => {
 
         {/* Total Collected Banner */}
         <Card className="premium-card overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-accent/20 via-transparent to-gold/10" />
-          <CardContent className="relative py-6 text-center">
+          <CardContent className="py-6 text-center">
             <p className="text-sm text-muted-foreground mb-1">Total Verified</p>
             <p className="text-4xl font-bold text-foreground">₹{totalVerified.toLocaleString()}</p>
           </CardContent>
@@ -186,9 +182,9 @@ const PaymentVerification = () => {
         {pendingPayments.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-gold" />
+              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
               <h3 className="text-lg font-semibold text-foreground">Pending Verification</h3>
-              <Badge className="bg-gold/20 text-gold border-gold/30 border ml-auto">
+              <Badge className="bg-muted text-muted-foreground border-border border ml-auto">
                 {pendingPayments.length}
               </Badge>
             </div>
@@ -197,7 +193,7 @@ const PaymentVerification = () => {
               {pendingPayments.map((payment, index) => (
                 <Card 
                   key={payment.id} 
-                  className="glass-card border-gold/30 hover:border-gold/50 transition-all duration-300"
+                  className="premium-card border-foreground/20"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <CardContent className="py-4">
@@ -205,7 +201,7 @@ const PaymentVerification = () => {
                       {/* Guest Info */}
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                             <User className="h-5 w-5 text-muted-foreground" />
                           </div>
                           <div>
@@ -217,13 +213,13 @@ const PaymentVerification = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-bold text-accent">₹{payment.amount.toLocaleString()}</p>
+                          <p className="text-xl font-bold text-foreground">₹{payment.amount.toLocaleString()}</p>
                           <p className="text-xs text-muted-foreground capitalize">{payment.payment_purpose}</p>
                         </div>
                       </div>
 
                       {/* Transaction Details */}
-                      <div className="bg-secondary/30 rounded-lg p-3 space-y-1">
+                      <div className="bg-muted/50 rounded-lg p-3 space-y-1">
                         <p className="text-xs text-muted-foreground">Transaction ID</p>
                         <p className="font-mono text-sm text-foreground">{payment.upi_transaction_id}</p>
                         <p className="text-xs text-muted-foreground mt-2">
@@ -272,7 +268,7 @@ const PaymentVerification = () => {
                                 placeholder="Reason for rejection (optional)"
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
-                                className="bg-secondary/50 border-border/50 text-foreground"
+                                className="bg-muted/50 border-border/50 text-foreground"
                               />
                               <Button
                                 variant="destructive"
@@ -295,7 +291,7 @@ const PaymentVerification = () => {
                         
                         <Button
                           size="sm"
-                          className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                          className="bg-foreground hover:bg-foreground/90 text-background"
                           onClick={() => updatePaymentMutation.mutate({ id: payment.id, status: "verified" })}
                           disabled={updatePaymentMutation.isPending}
                         >
@@ -320,9 +316,9 @@ const PaymentVerification = () => {
           <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
           
           {processedPayments.length === 0 ? (
-            <Card className="glass-card border-border/50">
+            <Card className="premium-card">
               <CardContent className="py-12 text-center">
-                <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
                   <Clock className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground">No payment history yet</p>
@@ -333,13 +329,13 @@ const PaymentVerification = () => {
               {processedPayments.map((payment, index) => (
                 <Card 
                   key={payment.id} 
-                  className="glass-card border-border/50 hover:border-accent/30 transition-all duration-300"
+                  className="premium-card"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <CardContent className="py-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                           <User className="h-5 w-5 text-muted-foreground" />
                         </div>
                         <div>

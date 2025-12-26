@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Upload, QrCode, CreditCard, CheckCircle, Settings, Sparkles } from "lucide-react";
+import { Loader2, Upload, QrCode, CreditCard, CheckCircle, Settings } from "lucide-react";
 
 const UPISettings = () => {
   const { user } = useAuth();
@@ -141,9 +141,9 @@ const UPISettings = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <DashboardLayout role="owner">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
       </DashboardLayout>
     );
@@ -151,11 +151,11 @@ const UPISettings = () => {
 
   if (!pgId) {
     return (
-      <DashboardLayout>
+      <DashboardLayout role="owner">
         <div className="min-h-[60vh] flex items-center justify-center p-6">
-          <Card className="glass-card border-border/50 max-w-md">
+          <Card className="premium-card max-w-md">
             <CardContent className="pt-8 pb-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
                 <Settings className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">Setup Required</h3>
@@ -170,15 +170,14 @@ const UPISettings = () => {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout role="owner">
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Header */}
         <Card className="premium-card overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-gold/5" />
-          <CardContent className="relative py-6">
+          <CardContent className="py-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-accent" />
+              <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-foreground" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">UPI Settings</h1>
@@ -189,12 +188,9 @@ const UPISettings = () => {
         </Card>
 
         {/* UPI ID Card */}
-        <Card className="glass-card border-border/50">
+        <Card className="premium-card">
           <CardContent className="pt-6 pb-6 space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="h-5 w-5 text-accent" />
-              <h3 className="font-semibold text-foreground">UPI ID</h3>
-            </div>
+            <h3 className="font-semibold text-foreground">UPI ID</h3>
             
             <div className="space-y-2">
               <Label className="text-muted-foreground text-sm">Your UPI ID</Label>
@@ -202,7 +198,7 @@ const UPISettings = () => {
                 placeholder="yourname@upi"
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
-                className="bg-secondary/50 border-border/50 focus:border-accent text-foreground placeholder:text-muted-foreground"
+                className="bg-muted/50 border-border/50 focus:border-foreground/50 text-foreground placeholder:text-muted-foreground"
               />
               <p className="text-xs text-muted-foreground">
                 Example: name@paytm, phone@ybl, name@okicici
@@ -210,26 +206,26 @@ const UPISettings = () => {
             </div>
 
             {upiId && (
-              <div className="flex items-center gap-2 p-3 bg-accent/10 rounded-lg border border-accent/20">
-                <CheckCircle className="h-5 w-5 text-accent" />
-                <span className="text-sm text-accent">UPI ID configured</span>
+              <div className="flex items-center gap-2 p-3 bg-foreground/5 rounded-lg border border-foreground/10">
+                <CheckCircle className="h-5 w-5 text-foreground" />
+                <span className="text-sm text-foreground">UPI ID configured</span>
               </div>
             )}
           </CardContent>
         </Card>
 
         {/* QR Code Card */}
-        <Card className="glass-card border-border/50">
+        <Card className="premium-card">
           <CardContent className="pt-6 pb-6 space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <QrCode className="h-5 w-5 text-gold" />
+            <div className="flex items-center gap-2">
+              <QrCode className="h-5 w-5 text-muted-foreground" />
               <h3 className="font-semibold text-foreground">UPI QR Code</h3>
             </div>
 
             {upiQrUrl ? (
               <div className="space-y-4">
                 <div className="flex justify-center">
-                  <div className="p-4 bg-white rounded-2xl shadow-premium">
+                  <div className="p-4 bg-foreground rounded-2xl">
                     <img
                       src={upiQrUrl}
                       alt="UPI QR Code"
@@ -237,14 +233,14 @@ const UPISettings = () => {
                     />
                   </div>
                 </div>
-                <div className="flex items-center justify-center gap-2 p-3 bg-accent/10 rounded-lg border border-accent/20">
-                  <CheckCircle className="h-5 w-5 text-accent" />
-                  <span className="text-sm text-accent">QR Code uploaded</span>
+                <div className="flex items-center justify-center gap-2 p-3 bg-foreground/5 rounded-lg border border-foreground/10">
+                  <CheckCircle className="h-5 w-5 text-foreground" />
+                  <span className="text-sm text-foreground">QR Code uploaded</span>
                 </div>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-border/50 rounded-xl p-8 text-center bg-secondary/20">
-                <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
+              <div className="border-2 border-dashed border-border/50 rounded-xl p-8 text-center bg-muted/20">
+                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
                   <QrCode className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -258,7 +254,7 @@ const UPISettings = () => {
                 <Button
                   variant="outline"
                   disabled={uploading}
-                  className="w-full border-border/50 text-foreground hover:bg-secondary/50"
+                  className="w-full border-border/50 text-foreground hover:bg-muted/50"
                   asChild
                 >
                   <span>
@@ -287,7 +283,7 @@ const UPISettings = () => {
         <Button 
           onClick={handleSaveUPI} 
           disabled={saving} 
-          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 rounded-xl shadow-glow transition-all duration-300 hover:shadow-glow-lg"
+          className="w-full bg-foreground hover:bg-foreground/90 text-background font-semibold py-6 rounded-xl transition-all duration-300"
         >
           {saving && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
           Save UPI Settings

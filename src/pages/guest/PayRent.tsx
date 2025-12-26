@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, QrCode, Upload, CheckCircle, Clock, XCircle, AlertCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Loader2, QrCode, Upload, CheckCircle, Clock, XCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 
 interface Payment {
@@ -191,7 +191,7 @@ const PayRent = () => {
     switch (status) {
       case "verified":
         return (
-          <Badge className="bg-accent/20 text-accent border-accent/30 border">
+          <Badge className="bg-foreground/20 text-foreground border-foreground/30 border">
             <CheckCircle className="h-3 w-3 mr-1" />Verified
           </Badge>
         );
@@ -203,7 +203,7 @@ const PayRent = () => {
         );
       default:
         return (
-          <Badge className="bg-secondary/20 text-secondary-foreground border-border border">
+          <Badge className="bg-muted text-muted-foreground border-border border">
             <Clock className="h-3 w-3 mr-1" />Pending
           </Badge>
         );
@@ -212,9 +212,9 @@ const PayRent = () => {
 
   if (loadingGuest) {
     return (
-      <DashboardLayout>
+      <DashboardLayout role="guest">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
       </DashboardLayout>
     );
@@ -222,11 +222,11 @@ const PayRent = () => {
 
   if (!guestData?.pg?.upi_id) {
     return (
-      <DashboardLayout>
+      <DashboardLayout role="guest">
         <div className="min-h-[60vh] flex items-center justify-center p-6">
-          <Card className="glass-card border-border/50 max-w-md">
+          <Card className="premium-card max-w-md">
             <CardContent className="pt-8 pb-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">Payment Not Available</h3>
@@ -241,16 +241,12 @@ const PayRent = () => {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout role="guest">
       <div className="space-y-6 animate-fade-in pb-24">
         {/* Hero Payment Card */}
         <Card className="premium-card overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-gold/5" />
-          <CardContent className="relative pt-8 pb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-accent" />
-              <span className="text-sm text-accent font-medium">Monthly Rent</span>
-            </div>
+          <CardContent className="pt-8 pb-8">
+            <p className="text-sm text-muted-foreground mb-2">Monthly Rent</p>
             {guestData.guest.monthly_rent > 0 && (
               <div className="mb-6">
                 <span className="text-5xl font-bold text-foreground">₹{guestData.guest.monthly_rent.toLocaleString()}</span>
@@ -261,13 +257,13 @@ const PayRent = () => {
         </Card>
 
         {/* UPI Details Card */}
-        <Card className="glass-card border-border/50">
+        <Card className="premium-card">
           <CardContent className="pt-6 pb-6">
             <div className="flex flex-col md:flex-row gap-6 items-center">
               {/* QR Code */}
               {guestData.pg.upi_qr_url && (
                 <div className="flex-shrink-0">
-                  <div className="p-3 bg-white rounded-2xl shadow-premium">
+                  <div className="p-3 bg-foreground rounded-2xl">
                     <img
                       src={guestData.pg.upi_qr_url}
                       alt="UPI QR Code"
@@ -280,10 +276,10 @@ const PayRent = () => {
               {/* UPI ID */}
               <div className="flex-1 text-center md:text-left">
                 <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
-                  <QrCode className="h-5 w-5 text-accent" />
+                  <QrCode className="h-5 w-5 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">UPI ID</span>
                 </div>
-                <p className="text-lg font-mono font-semibold text-foreground bg-secondary/50 px-4 py-2 rounded-lg inline-block">
+                <p className="text-lg font-mono font-semibold text-foreground bg-muted px-4 py-2 rounded-lg inline-block">
                   {guestData.pg.upi_id}
                 </p>
               </div>
@@ -292,14 +288,14 @@ const PayRent = () => {
         </Card>
 
         {/* Payment Form */}
-        <Card className="glass-card border-border/50">
+        <Card className="premium-card">
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Submit Payment Details</h3>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-muted-foreground text-sm">Payment Purpose</Label>
                 <Select value={purpose} onValueChange={setPurpose}>
-                  <SelectTrigger className="bg-secondary/50 border-border/50 focus:border-accent">
+                  <SelectTrigger className="bg-muted/50 border-border/50 focus:border-foreground/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -320,7 +316,7 @@ const PayRent = () => {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   min="1"
-                  className="bg-secondary/50 border-border/50 focus:border-accent text-foreground placeholder:text-muted-foreground"
+                  className="bg-muted/50 border-border/50 focus:border-foreground/50 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -330,7 +326,7 @@ const PayRent = () => {
                   placeholder="Enter transaction/reference ID"
                   value={transactionId}
                   onChange={(e) => setTransactionId(e.target.value)}
-                  className="bg-secondary/50 border-border/50 focus:border-accent text-foreground placeholder:text-muted-foreground"
+                  className="bg-muted/50 border-border/50 focus:border-foreground/50 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -342,7 +338,7 @@ const PayRent = () => {
                       <img
                         src={screenshotUrl}
                         alt="Payment screenshot"
-                        className="w-full max-h-48 object-contain bg-secondary/30"
+                        className="w-full max-h-48 object-contain bg-muted/30"
                       />
                     </div>
                     <Button
@@ -358,9 +354,9 @@ const PayRent = () => {
                 ) : (
                   <div>
                     <Label htmlFor="screenshot-upload" className="cursor-pointer">
-                      <div className="border-2 border-dashed border-border/50 rounded-xl p-6 text-center hover:border-accent/50 transition-colors bg-secondary/20">
+                      <div className="border-2 border-dashed border-border/50 rounded-xl p-6 text-center hover:border-foreground/30 transition-colors bg-muted/20">
                         {uploading ? (
-                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-accent" />
+                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-foreground" />
                         ) : (
                           <>
                             <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
@@ -385,7 +381,7 @@ const PayRent = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 rounded-xl shadow-glow transition-all duration-300 hover:shadow-glow-lg"
+                className="w-full bg-foreground hover:bg-foreground/90 text-background font-semibold py-6 rounded-xl transition-all duration-300"
                 disabled={submitPaymentMutation.isPending}
               >
                 {submitPaymentMutation.isPending ? (
@@ -404,12 +400,12 @@ const PayRent = () => {
           <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
           {loadingPayments ? (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-accent" />
+              <Loader2 className="h-6 w-6 animate-spin text-foreground" />
             </div>
           ) : payments?.length === 0 ? (
-            <Card className="glass-card border-border/50">
+            <Card className="premium-card">
               <CardContent className="py-12 text-center">
-                <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
                   <Clock className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground">No payment history yet</p>
@@ -420,7 +416,7 @@ const PayRent = () => {
               {payments?.map((payment, index) => (
                 <Card 
                   key={payment.id} 
-                  className="glass-card border-border/50 hover:border-accent/30 transition-all duration-300"
+                  className="premium-card"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <CardContent className="py-4">
