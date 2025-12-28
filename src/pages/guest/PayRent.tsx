@@ -10,8 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, QrCode, Upload, CheckCircle, Clock, XCircle, AlertCircle, ArrowRight, Smartphone } from "lucide-react";
+import { Loader2, QrCode, Upload, CheckCircle, Clock, XCircle, AlertCircle, ArrowRight, Smartphone, Download } from "lucide-react";
 import { format } from "date-fns";
+import { generateRentReceipt } from "@/utils/generateRentReceipt";
 
 // UPI app icons as simple SVGs
 const PhonePeIcon = () => (
@@ -60,7 +61,7 @@ const PayRent = () => {
     queryFn: async () => {
       const { data: guest, error: guestError } = await supabase
         .from("guests")
-        .select("id, pg_id, monthly_rent")
+        .select("id, pg_id, monthly_rent, full_name, phone")
         .eq("user_id", user?.id)
         .maybeSingle();
 
@@ -69,7 +70,7 @@ const PayRent = () => {
 
       const { data: pg, error: pgError } = await supabase
         .from("pgs")
-        .select("id, name, upi_id, upi_qr_url")
+        .select("id, name, address, city, owner_name, contact_number, upi_id, upi_qr_url")
         .eq("id", guest.pg_id)
         .maybeSingle();
 
@@ -561,7 +562,36 @@ const PayRent = () => {
                           </p>
                         )}
                       </div>
-                      <div>{getStatusBadge(payment.status)}</div>
+                      <div className="flex flex-col items-end gap-2">
+                        {getStatusBadge(payment.status)}
+                        {payment.status === "verified" && guestData?.guest && guestData?.pg && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs text-muted-foreground hover:text-foreground"
+                            onClick={() => {
+                              generateRentReceipt({
+                                guestName: guestData.guest.full_name,
+                                guestPhone: guestData.guest.phone,
+                                pgName: guestData.pg.name,
+                                pgAddress: guestData.pg.address,
+                                pgCity: guestData.pg.city,
+                                ownerName: guestData.pg.owner_name,
+                                ownerContact: guestData.pg.contact_number,
+                                amount: payment.amount,
+                                paymentPurpose: payment.payment_purpose,
+                                paymentMonth: payment.payment_month,
+                                transactionId: payment.upi_transaction_id,
+                                paymentDate: payment.created_at,
+                                status: payment.status,
+                              });
+                            }}
+                          >
+                            <Download className="h-3 w-3 mr-1" />
+                            Receipt
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
