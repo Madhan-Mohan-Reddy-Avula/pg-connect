@@ -18,7 +18,8 @@ import {
   Wallet,
   Moon,
   Sun,
-  TrendingDown
+  TrendingDown,
+  Megaphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +35,7 @@ const ownerNavItems = [
   { href: '/owner/guests', label: 'Guests', icon: Users },
   { href: '/owner/rents', label: 'Rent', icon: Receipt },
   { href: '/owner/expenses', label: 'Expenses', icon: TrendingDown },
+  { href: '/owner/announcements', label: 'Announce', icon: Megaphone },
   { href: '/owner/upi', label: 'UPI', icon: QrCode },
   { href: '/owner/payments', label: 'Verify', icon: CheckSquare },
   { href: '/owner/complaints', label: 'Issues', icon: MessageSquare },
