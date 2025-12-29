@@ -11,8 +11,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, User, Edit2, Trash2, Users, BedDouble, Phone, Mail, History, Clock } from 'lucide-react';
+import { Plus, User, Edit2, Trash2, Users, BedDouble, Phone, Mail, History, Clock, FileText, Download, Eye } from 'lucide-react';
 import { format } from 'date-fns';
+
+interface Document {
+  id: string;
+  guest_id: string;
+  document_type: string;
+  document_url: string;
+  uploaded_at: string;
+}
 
 interface Guest {
   id: string;
@@ -53,6 +61,8 @@ export default function GuestsManagement() {
   const [selectedBedId, setSelectedBedId] = useState<string | null>(null);
   const [guestHistoryDialogOpen, setGuestHistoryDialogOpen] = useState(false);
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
+  const [documentsDialogOpen, setDocumentsDialogOpen] = useState(false);
+  const [selectedGuestForDocs, setSelectedGuestForDocs] = useState<Guest | null>(null);
   const [formData, setFormData] = useState({
     full_name: '',
     phone: '',
@@ -156,6 +166,21 @@ export default function GuestsManagement() {
       })) as BedHistoryEntry[];
     },
     enabled: !!selectedGuestId,
+  });
+
+  // Fetch documents for selected guest
+  const { data: guestDocuments, isLoading: documentsLoading } = useQuery({
+    queryKey: ['guest-documents', selectedGuestForDocs?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('guest_id', selectedGuestForDocs!.id)
+        .order('uploaded_at', { ascending: false });
+      if (error) throw error;
+      return data as Document[];
+    },
+    enabled: !!selectedGuestForDocs?.id,
   });
 
   const addGuestMutation = useMutation({
@@ -393,6 +418,63 @@ export default function GuestsManagement() {
     setGuestHistoryDialogOpen(true);
   };
 
+  const openGuestDocuments = (guest: Guest) => {
+    setSelectedGuestForDocs(guest);
+    setDocumentsDialogOpen(true);
+  };
+
+  const getFilePath = (url: string): string => {
+    // Extract file path from full URL for storage operations
+    const match = url.match(/\/documents\/(.+)$/);
+    return match ? match[1] : url;
+  };
+
+  const handleViewDocument = async (documentUrl: string) => {
+    try {
+      const filePath = getFilePath(documentUrl);
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(filePath, 3600);
+      
+      if (error) throw error;
+      window.open(data.signedUrl, '_blank');
+    } catch (error: any) {
+      toast({ 
+        title: 'Error viewing document', 
+        description: error.message,
+        variant: 'destructive' 
+      });
+    }
+  };
+
+  const handleDownloadDocument = async (documentUrl: string, documentType: string) => {
+    try {
+      const filePath = getFilePath(documentUrl);
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(filePath);
+      
+      if (error) throw error;
+
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${documentType}.${filePath.split('.').pop()}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({ title: 'Download started', description: `${documentType} is downloading` });
+    } catch (error: any) {
+      toast({ 
+        title: 'Error downloading document', 
+        description: error.message,
+        variant: 'destructive' 
+      });
+    }
+  };
+
   if (!pg) {
     return (
       <DashboardLayout>
@@ -555,6 +637,15 @@ export default function GuestsManagement() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
+                        onClick={() => openGuestDocuments(guest)}
+                        title="View ID proofs"
+                      >
+                        <FileText className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
                         onClick={() => openGuestHistory(guest.id)}
                         title="View bed history"
                       >
@@ -684,6 +775,67 @@ export default function GuestsManagement() {
                   <div className="text-sm text-muted-foreground mt-1">
                     {format(new Date(entry.assigned_date), 'dd MMM yyyy')}
                     {entry.vacated_date && ` → ${format(new Date(entry.vacated_date), 'dd MMM yyyy')}`}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Guest Documents Dialog */}
+      <Dialog open={documentsDialogOpen} onOpenChange={setDocumentsDialogOpen}>
+        <DialogContent className="max-w-md bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              ID Proofs - {selectedGuestForDocs?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-80 overflow-y-auto">
+            {documentsLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map((i) => (
+                  <div key={i} className="h-16 bg-muted animate-pulse rounded-lg" />
+                ))}
+              </div>
+            ) : guestDocuments?.length === 0 ? (
+              <p className="text-muted-foreground text-center py-4">No ID proofs uploaded</p>
+            ) : (
+              guestDocuments?.map((doc) => (
+                <div key={doc.id} className="p-3 bg-secondary/30 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <span className="font-medium capitalize">{doc.document_type.replace('_', ' ')}</span>
+                        <p className="text-xs text-muted-foreground">
+                          Uploaded {format(new Date(doc.uploaded_at), 'dd MMM yyyy')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleViewDocument(doc.document_url)}
+                        title="View document"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleDownloadDocument(doc.document_url, doc.document_type)}
+                        title="Download document"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))
