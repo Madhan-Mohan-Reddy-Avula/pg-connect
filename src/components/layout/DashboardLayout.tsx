@@ -21,7 +21,8 @@ import {
   Sun,
   TrendingDown,
   Megaphone,
-  Settings
+  Settings,
+  UserCog
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -41,6 +42,7 @@ const ownerNavItems = [
   { href: '/owner/upi', label: 'UPI', icon: QrCode },
   { href: '/owner/payments', label: 'Verify', icon: CheckSquare },
   { href: '/owner/complaints', label: 'Issues', icon: MessageSquare },
+  { href: '/owner/managers', label: 'Managers', icon: UserCog },
   { href: '/owner/notifications', label: 'Alerts', icon: Settings },
 ];
 

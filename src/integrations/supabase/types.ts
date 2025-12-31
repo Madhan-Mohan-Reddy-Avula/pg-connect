@@ -327,6 +327,92 @@ export type Database = {
           },
         ]
       }
+      managers: {
+        Row: {
+          can_manage_announcements: boolean
+          can_manage_complaints: boolean
+          can_manage_expenses: boolean
+          can_manage_guests: boolean
+          can_manage_rents: boolean
+          can_manage_rooms: boolean
+          can_verify_payments: boolean
+          can_view_analytics: boolean
+          can_view_announcements: boolean
+          can_view_complaints: boolean
+          can_view_expenses: boolean
+          can_view_guests: boolean
+          can_view_payments: boolean
+          can_view_rents: boolean
+          can_view_rooms: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string
+          pg_id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_manage_announcements?: boolean
+          can_manage_complaints?: boolean
+          can_manage_expenses?: boolean
+          can_manage_guests?: boolean
+          can_manage_rents?: boolean
+          can_manage_rooms?: boolean
+          can_verify_payments?: boolean
+          can_view_analytics?: boolean
+          can_view_announcements?: boolean
+          can_view_complaints?: boolean
+          can_view_expenses?: boolean
+          can_view_guests?: boolean
+          can_view_payments?: boolean
+          can_view_rents?: boolean
+          can_view_rooms?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          pg_id: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_manage_announcements?: boolean
+          can_manage_complaints?: boolean
+          can_manage_expenses?: boolean
+          can_manage_guests?: boolean
+          can_manage_rents?: boolean
+          can_manage_rooms?: boolean
+          can_verify_payments?: boolean
+          can_view_analytics?: boolean
+          can_view_announcements?: boolean
+          can_view_complaints?: boolean
+          can_view_expenses?: boolean
+          can_view_guests?: boolean
+          can_view_payments?: boolean
+          can_view_rents?: boolean
+          can_view_rooms?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          pg_id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "managers_pg_id_fkey"
+            columns: ["pg_id"]
+            isOneToOne: false
+            referencedRelation: "pgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       manual_payments: {
         Row: {
           amount: number
@@ -636,12 +722,20 @@ export type Database = {
     }
     Functions: {
       get_guest_pg_id: { Args: { _user_id: string }; Returns: string }
+      get_manager_permission: {
+        Args: { _permission: string; _pg_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_owner_pg_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_manager_of_pg: {
+        Args: { _pg_id: string; _user_id: string }
         Returns: boolean
       }
     }
