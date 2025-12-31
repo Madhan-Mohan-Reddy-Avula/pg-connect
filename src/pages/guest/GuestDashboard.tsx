@@ -12,9 +12,12 @@ import { PhotoGallery } from '@/components/guest/PhotoGallery';
 import { HouseRules } from '@/components/guest/HouseRules';
 import { Announcements } from '@/components/guest/Announcements';
 import { RentDueAlert } from '@/components/guest/RentDueAlert';
+import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 export default function GuestDashboard() {
   const { user } = useAuth();
+  const { showOnboarding, completeOnboarding } = useOnboarding('guest', user?.id);
 
   const { data: guest, isLoading: guestLoading } = useQuery({
     queryKey: ['guest-details', user?.id],
@@ -89,6 +92,9 @@ export default function GuestDashboard() {
 
   return (
     <DashboardLayout>
+      {showOnboarding && (
+        <OnboardingTutorial role="guest" onComplete={completeOnboarding} />
+      )}
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Welcome, {guest.full_name}!</h1>
