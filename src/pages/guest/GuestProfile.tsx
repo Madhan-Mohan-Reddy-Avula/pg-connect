@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { User, Phone, Mail, FileText, Upload, Eye, AlertCircle, Download, Trash2 } from 'lucide-react';
+import { User, Phone, Mail, FileText, Upload, Eye, AlertCircle, Download, Trash2, BookOpen } from 'lucide-react';
+import { generateUserManual } from '@/utils/generateUserManual';
 
 interface Document {
   id: string;
@@ -248,9 +249,21 @@ export default function GuestProfile() {
   return (
     <DashboardLayout>
       <div className="space-y-6 max-w-2xl pb-24">
-        <div>
-          <h1 className="text-2xl font-bold">My Profile</h1>
-          <p className="text-muted-foreground">View and update your personal information</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">My Profile</h1>
+            <p className="text-muted-foreground">View and update your personal information</p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => generateUserManual('guest')}
+            className="flex items-center gap-2"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden sm:inline">Guest Manual</span>
+            <Download className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* Profile Card */}

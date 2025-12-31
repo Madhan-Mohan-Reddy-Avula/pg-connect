@@ -12,8 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, UserCog, Edit2, Trash2, Mail, Phone, Shield, Eye, Settings, Search } from 'lucide-react';
+import { Plus, UserCog, Edit2, Trash2, Mail, Phone, Shield, Eye, Settings, Search, BookOpen, Download } from 'lucide-react';
 import { format } from 'date-fns';
+import { generateUserManual } from '@/utils/generateUserManual';
 
 interface Manager {
   id: string;
@@ -320,117 +321,129 @@ export default function ManagersManagement() {
             <h1 className="text-2xl font-bold">Managers</h1>
             <p className="text-muted-foreground">Add managers and control their access permissions</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => handleOpenDialog()} className="bg-foreground text-background hover:bg-foreground/90">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Manager
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-card border-border max-w-lg max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{editingManager ? 'Edit Manager' : 'Add New Manager'}</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Manager name"
-                      className="bg-secondary/50 border-border"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="manager@example.com"
-                      className="bg-secondary/50 border-border"
-                      required
-                      disabled={!!editingManager}
-                    />
-                    {!editingManager && (
-                      <p className="text-xs text-muted-foreground">Manager must have an existing account with this email</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone (Optional)</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="Phone number"
-                      className="bg-secondary/50 border-border"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-muted-foreground" />
-                    <Label className="text-base font-semibold">Permissions</Label>
-                  </div>
-                  
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => generateUserManual('manager')}
+              className="flex items-center gap-2"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">Manager Manual</span>
+              <Download className="w-4 h-4" />
+            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => handleOpenDialog()} className="bg-foreground text-background hover:bg-foreground/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Manager
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-card border-border max-w-lg max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{editingManager ? 'Edit Manager' : 'Add New Manager'}</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
-                    {PERMISSION_GROUPS.map((group) => (
-                      <div key={group.label} className="border border-border rounded-lg p-3 space-y-3">
-                        <p className="font-medium text-sm">{group.label}</p>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Eye className="w-4 h-4 text-muted-foreground" />
-                              <span className="text-sm">View</span>
-                            </div>
-                            <Switch
-                              checked={formData[group.viewKey as keyof typeof formData] as boolean}
-                              onCheckedChange={(checked) => 
-                                setFormData({ ...formData, [group.viewKey]: checked })
-                              }
-                            />
-                          </div>
-                          {group.manageKey && (
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Manager name"
+                        className="bg-secondary/50 border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="manager@example.com"
+                        className="bg-secondary/50 border-border"
+                        required
+                        disabled={!!editingManager}
+                      />
+                      {!editingManager && (
+                        <p className="text-xs text-muted-foreground">Manager must have an existing account with this email</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone (Optional)</Label>
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="Phone number"
+                        className="bg-secondary/50 border-border"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-muted-foreground" />
+                      <Label className="text-base font-semibold">Permissions</Label>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {PERMISSION_GROUPS.map((group) => (
+                        <div key={group.label} className="border border-border rounded-lg p-3 space-y-3">
+                          <p className="font-medium text-sm">{group.label}</p>
+                          <div className="flex flex-col gap-2">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <Settings className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm">{group.manageLabel || 'Manage'}</span>
+                                <Eye className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm">View</span>
                               </div>
                               <Switch
-                                checked={formData[group.manageKey as keyof typeof formData] as boolean}
+                                checked={formData[group.viewKey as keyof typeof formData] as boolean}
                                 onCheckedChange={(checked) => 
-                                  setFormData({ ...formData, [group.manageKey!]: checked })
+                                  setFormData({ ...formData, [group.viewKey]: checked })
                                 }
-                                disabled={!formData[group.viewKey as keyof typeof formData]}
                               />
                             </div>
-                          )}
+                            {group.manageKey && (
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Settings className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-sm">{group.manageLabel || 'Manage'}</span>
+                                </div>
+                                <Switch
+                                  checked={formData[group.manageKey as keyof typeof formData] as boolean}
+                                  onCheckedChange={(checked) => 
+                                    setFormData({ ...formData, [group.manageKey!]: checked })
+                                  }
+                                  disabled={!formData[group.viewKey as keyof typeof formData]}
+                                />
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex gap-3 pt-4">
-                  <Button type="button" variant="outline" className="flex-1" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    className="flex-1 bg-foreground text-background hover:bg-foreground/90" 
-                    disabled={addManagerMutation.isPending || updateManagerMutation.isPending}
-                  >
-                    {editingManager ? 'Update Manager' : 'Add Manager'}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <div className="flex gap-3 pt-4">
+                    <Button type="button" variant="outline" className="flex-1" onClick={() => setIsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="flex-1 bg-foreground text-background hover:bg-foreground/90" 
+                      disabled={addManagerMutation.isPending || updateManagerMutation.isPending}
+                    >
+                      {editingManager ? 'Update Manager' : 'Add Manager'}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {/* Search */}
