@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useManager } from '@/contexts/ManagerContext';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Building2, Image } from 'lucide-react';
+import { Loader2, Save, Building2, Image, BookOpen, Download } from 'lucide-react';
+import { generateUserManual } from '@/utils/generateUserManual';
 import { z } from 'zod';
 import { MultiImageUpload } from '@/components/ui/image-upload';
 
@@ -179,15 +181,27 @@ export default function PGSetup() {
   return (
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-6 animate-fade-in pb-24">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
-            {pgData.id ? 'Edit PG Details' : 'Set Up Your PG'}
-          </h1>
-          <p className="text-muted-foreground">
-            {pgData.id 
-              ? 'Update your PG information and house rules' 
-              : 'Enter your PG details to get started'}
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+              {pgData.id ? 'Edit PG Details' : 'Set Up Your PG'}
+            </h1>
+            <p className="text-muted-foreground">
+              {pgData.id 
+                ? 'Update your PG information and house rules' 
+                : 'Enter your PG details to get started'}
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => generateUserManual('owner')}
+            className="flex items-center gap-2 shrink-0"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden sm:inline">Owner Manual</span>
+            <Download className="w-4 h-4" />
+          </Button>
         </div>
 
         <Card className="premium-card">
