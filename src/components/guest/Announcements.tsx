@@ -74,21 +74,17 @@ export function Announcements({ pgId }: AnnouncementsProps) {
 
   if (isLoading) {
     return (
-      <Card className="premium-card border-border/30">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg text-foreground">
-            <Megaphone className="w-5 h-5 text-primary" />
-            Announcements
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-20 shimmer rounded-xl" />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-2">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground px-1">
+          <Megaphone className="w-4 h-4 text-primary" />
+          Announcements
+        </h3>
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-20 w-64 flex-shrink-0 shimmer rounded-xl" />
+          ))}
+        </div>
+      </div>
     );
   }
 
@@ -97,14 +93,17 @@ export function Announcements({ pgId }: AnnouncementsProps) {
   }
 
   return (
-    <Card className="premium-card border-border/30">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg text-foreground">
-          <Megaphone className="w-5 h-5 text-primary" />
-          Announcements
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <div className="space-y-2">
+      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground px-1">
+        <Megaphone className="w-4 h-4 text-primary" />
+        Announcements
+        {announcements.length > 1 && (
+          <span className="text-xs text-muted-foreground font-normal">
+            • Scroll for more →
+          </span>
+        )}
+      </h3>
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
         {announcements.map((announcement) => {
           const config = getPriorityConfig(announcement.priority);
           const Icon = config.icon;
@@ -112,23 +111,23 @@ export function Announcements({ pgId }: AnnouncementsProps) {
           return (
             <div
               key={announcement.id}
-              className={`p-4 rounded-xl ${config.bgColor} border ${config.borderColor} transition-all`}
+              className={`p-3 rounded-xl ${config.bgColor} border ${config.borderColor} transition-all flex-shrink-0 w-72 snap-start`}
             >
-              <div className="flex items-start gap-3">
-                <div className={`w-9 h-9 rounded-lg ${config.bgColor} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-5 h-5 ${config.color}`} />
+              <div className="flex items-start gap-2">
+                <div className={`w-8 h-8 rounded-lg ${config.bgColor} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-4 h-4 ${config.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h4 className="font-semibold text-foreground">{announcement.title}</h4>
-                    <Badge className={`text-xs border ${config.badge}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-semibold text-foreground text-sm truncate">{announcement.title}</h4>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${config.badge} flex-shrink-0`}>
                       {announcement.priority}
-                    </Badge>
+                    </span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap">
+                  <p className="text-xs text-muted-foreground line-clamp-2">
                     {announcement.content}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(announcement.created_at), { addSuffix: true })}
                   </p>
                 </div>
@@ -136,7 +135,7 @@ export function Announcements({ pgId }: AnnouncementsProps) {
             </div>
           );
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
