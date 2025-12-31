@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useManager } from '@/contexts/ManagerContext';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import StatCard from '@/components/dashboard/StatCard';
 import BedOccupancyWidget from '@/components/dashboard/BedOccupancyWidget';
@@ -21,6 +22,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 interface DashboardStats {
   totalRooms: number;
@@ -42,6 +45,11 @@ interface RecentGuest {
 
 export default function OwnerDashboard() {
   const { user } = useAuth();
+  const { isManager } = useManager();
+  const { showOnboarding, completeOnboarding } = useOnboarding(
+    isManager ? 'manager' : 'owner', 
+    user?.id
+  );
   const [stats, setStats] = useState<DashboardStats>({
     totalRooms: 0, totalBeds: 0, occupiedBeds: 0, activeGuests: 0, pendingRents: 0, openComplaints: 0, monthlyExpenses: 0, monthlyCollected: 0,
   });
@@ -119,6 +127,12 @@ export default function OwnerDashboard() {
 
   return (
     <DashboardLayout>
+      {showOnboarding && (
+        <OnboardingTutorial 
+          role={isManager ? 'manager' : 'owner'} 
+          onComplete={completeOnboarding} 
+        />
+      )}
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Dashboard</h1>
