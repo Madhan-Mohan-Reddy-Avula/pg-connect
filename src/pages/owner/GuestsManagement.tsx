@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, User, Edit2, Trash2, Users, BedDouble, Phone, Mail, History, Clock, FileText, Download, Eye, CheckCircle2, AlertCircle, Search, Filter } from 'lucide-react';
+import { Plus, User, Edit2, Trash2, Users, BedDouble, Phone, Mail, History, Clock, FileText, Download, Eye, CheckCircle2, AlertCircle, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Document {
@@ -69,6 +69,7 @@ export default function GuestsManagement() {
   const [selectedGuestForAction, setSelectedGuestForAction] = useState<Guest | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'vacated'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'rent' | 'date'>('date');
   const [formData, setFormData] = useState({
     full_name: '',
     phone: '',
@@ -671,6 +672,17 @@ export default function GuestsManagement() {
               <SelectItem value="vacated">Vacated</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={sortBy} onValueChange={(v: 'name' | 'rent' | 'date') => setSortBy(v)}>
+            <SelectTrigger className="w-full sm:w-40 bg-secondary/50 border-border">
+              <ArrowUpDown className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="date">Latest First</SelectItem>
+              <SelectItem value="name">Name A-Z</SelectItem>
+              <SelectItem value="rent">Rent High-Low</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {isLoading ? (
@@ -690,6 +702,10 @@ export default function GuestsManagement() {
               guest.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
               guest.phone.includes(searchQuery);
             return matchesStatus && matchesSearch;
+          }).sort((a, b) => {
+            if (sortBy === 'name') return a.full_name.localeCompare(b.full_name);
+            if (sortBy === 'rent') return b.monthly_rent - a.monthly_rent;
+            return 0; // date is default from query
           });
           
           if (filteredGuests?.length === 0) {

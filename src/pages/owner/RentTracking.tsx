@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Receipt, Check, Clock, IndianRupee, Calendar, User, Download, AlertTriangle, Filter, Search } from 'lucide-react';
+import { Plus, Receipt, Check, Clock, IndianRupee, Calendar, User, Download, AlertTriangle, Filter, Search, ArrowUpDown } from 'lucide-react';
 import { generateRentReceipt } from '@/utils/generateRentReceipt';
 import { format, differenceInDays, isPast, isToday } from 'date-fns';
 
@@ -42,6 +42,7 @@ export default function RentTracking() {
   const [statusFilter, setStatusFilter] = useState<RentStatusFilter>('all');
   const [monthFilter, setMonthFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'date' | 'amount' | 'name'>('date');
   const [formData, setFormData] = useState({
     guest_id: '',
     amount: 0,
@@ -400,6 +401,17 @@ export default function RentTracking() {
               <SelectItem value="overdue">Overdue</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={sortBy} onValueChange={(v: 'date' | 'amount' | 'name') => setSortBy(v)}>
+            <SelectTrigger className="w-full sm:w-40 bg-secondary/50 border-border">
+              <ArrowUpDown className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="date">Due Date</SelectItem>
+              <SelectItem value="amount">Amount</SelectItem>
+              <SelectItem value="name">Name A-Z</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Rent List */}
@@ -425,6 +437,10 @@ export default function RentTracking() {
               (statusFilter === 'pending' && rent.status === 'pending' && statusInfo.status !== 'overdue') ||
               (statusFilter === 'overdue' && statusInfo.status === 'overdue');
             return matchesSearch && matchesMonth && matchesStatus;
+          }).sort((a, b) => {
+            if (sortBy === 'amount') return b.amount - a.amount;
+            if (sortBy === 'name') return (a.guest?.full_name || '').localeCompare(b.guest?.full_name || '');
+            return 0; // date is default from query
           });
 
           if (filteredRents?.length === 0) {

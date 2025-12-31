@@ -20,6 +20,7 @@ import OwnerComplaints from "./pages/owner/OwnerComplaints";
 import ExpensesManagement from "./pages/owner/ExpensesManagement";
 import AnnouncementsManagement from "./pages/owner/AnnouncementsManagement";
 import NotificationSettings from "./pages/owner/NotificationSettings";
+import ManagersManagement from "./pages/owner/ManagersManagement";
 import GuestDashboard from "./pages/guest/GuestDashboard";
 import GuestProfile from "./pages/guest/GuestProfile";
 import PayRent from "./pages/guest/PayRent";
@@ -78,6 +79,7 @@ function AppRoutes() {
       <Route path="/owner/expenses" element={<ProtectedRoute allowedRole="owner"><ExpensesManagement /></ProtectedRoute>} />
       <Route path="/owner/announcements" element={<ProtectedRoute allowedRole="owner"><AnnouncementsManagement /></ProtectedRoute>} />
       <Route path="/owner/notifications" element={<ProtectedRoute allowedRole="owner"><NotificationSettings /></ProtectedRoute>} />
+      <Route path="/owner/managers" element={<ProtectedRoute allowedRole="owner"><ManagersManagement /></ProtectedRoute>} />
       
       {/* Guest Routes */}
       <Route path="/guest" element={<ProtectedRoute allowedRole="guest"><GuestDashboard /></ProtectedRoute>} />
