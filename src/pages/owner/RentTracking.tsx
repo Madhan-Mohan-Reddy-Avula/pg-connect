@@ -527,9 +527,9 @@ export default function RentTracking() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => {
+                            onClick={async () => {
                                 if (pg && rent.guest) {
-                                  generateRentReceipt({
+                                  await generateRentReceipt({
                                     guestName: rent.guest.full_name,
                                     guestPhone: rent.guest.phone,
                                     pgName: pg.name,

@@ -325,7 +325,7 @@ export default function ManagersManagement() {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => generateUserManual('manager')}
+              onClick={async () => await generateUserManual('manager')}
               className="flex items-center gap-2"
             >
               <BookOpen className="w-4 h-4" />

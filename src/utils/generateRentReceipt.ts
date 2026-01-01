@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
+import { savePdfToDevice } from './savePdfMobile';
 
 interface ReceiptData {
   guestName: string;
@@ -45,7 +46,7 @@ const wrapText = (doc: jsPDF, text: string, maxWidth: number): string[] => {
   return lines;
 };
 
-export const generateRentReceipt = (data: ReceiptData) => {
+export const generateRentReceipt = async (data: ReceiptData) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const leftMargin = 20;
@@ -231,5 +232,5 @@ export const generateRentReceipt = (data: ReceiptData) => {
   
   // Save the PDF
   const fileName = `Receipt_${purpose}_${paymentMonth ? format(new Date(paymentMonth), 'MMM_yyyy') : 'payment'}.pdf`;
-  doc.save(fileName);
+  await savePdfToDevice(doc, fileName);
 };

@@ -257,7 +257,7 @@ export default function GuestProfile() {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => generateUserManual('guest')}
+            onClick={async () => await generateUserManual('guest')}
             className="flex items-center gap-2"
           >
             <BookOpen className="w-4 h-4" />

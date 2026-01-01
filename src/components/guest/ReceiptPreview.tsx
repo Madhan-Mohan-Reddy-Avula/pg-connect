@@ -34,8 +34,8 @@ interface ReceiptPreviewProps {
 const ReceiptPreview = ({ open, onOpenChange, data }: ReceiptPreviewProps) => {
   if (!data) return null;
 
-  const handleDownload = () => {
-    generateRentReceipt(data);
+  const handleDownload = async () => {
+    await generateRentReceipt(data);
     onOpenChange(false);
   };
 

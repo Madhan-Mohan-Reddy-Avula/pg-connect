@@ -195,7 +195,7 @@ export default function PGSetup() {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => generateUserManual('owner')}
+            onClick={async () => await generateUserManual('owner')}
             className="flex items-center gap-2 shrink-0"
           >
             <BookOpen className="w-4 h-4" />
