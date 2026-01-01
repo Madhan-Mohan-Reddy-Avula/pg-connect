@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { savePdfToDevice } from './savePdfMobile';
 
 type UserRole = 'guest' | 'owner' | 'manager';
 
@@ -343,7 +344,7 @@ const managerManualSections: ManualSection[] = [
   },
 ];
 
-export const generateUserManual = (role: UserRole) => {
+export const generateUserManual = async (role: UserRole) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -442,5 +443,5 @@ export const generateUserManual = (role: UserRole) => {
 
   // Save the PDF
   const fileName = `${role}-user-manual.pdf`;
-  doc.save(fileName);
+  await savePdfToDevice(doc, fileName);
 };
